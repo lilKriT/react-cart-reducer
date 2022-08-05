@@ -40,6 +40,25 @@ const reducer = (state, action) => {
     };
   }
 
+  if (action.type === "TOGGLE") {
+    let newCart = state.cart
+      .map((cartItem) => {
+        if (cartItem.id === action.payload.id) {
+          if (action.payload.type === "inc") {
+            return { ...cartItem, amount: cartItem.amount + 1 };
+          } else if (action.payload.type === "dec")
+            return { ...cartItem, amount: cartItem.amount - 1 };
+        }
+        return cartItem;
+      })
+      .filter((cartItem) => cartItem.amount > 0);
+
+    return {
+      ...state,
+      cart: newCart,
+    };
+  }
+
   if (action.type === "GET_TOTALS") {
     let { amount, total } = state.cart.reduce(
       (cartTotal, cartItem) => {
@@ -65,7 +84,7 @@ const reducer = (state, action) => {
     return { ...state, cart: action.payload, loading: false };
   }
 
-  return state;
+  throw new Error("No matching action type");
 };
 
 export default reducer;
